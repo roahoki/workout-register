@@ -53,11 +53,11 @@ Rails.application.configure do
 
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.default_url_options = { host: "plannisthenics.fly.dev", protocol: "https" }
+  config.action_mailer.default_url_options = { host: ENV.fetch("RENDER_EXTERNAL_HOSTNAME", "plannisthenics.onrender.com"), protocol: "https" }
   config.action_mailer.smtp_settings = {
     address: "smtp.gmail.com",
     port: 587,
-    domain: "plannisthenics.fly.dev",
+    domain: ENV.fetch("RENDER_EXTERNAL_HOSTNAME", "plannisthenics.onrender.com"),
     user_name: ENV["GMAIL_USERNAME"],
     password: ENV["GMAIL_PASSWORD"],
     authentication: :plain,
@@ -74,5 +74,5 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
-  config.hosts << "plannisthenics.fly.dev"
+  config.hosts << ENV.fetch("RENDER_EXTERNAL_HOSTNAME", "plannisthenics.onrender.com")
 end
