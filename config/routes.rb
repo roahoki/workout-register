@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   resources :exercises, only: [ :index, :show ]
 
   resources :routines do
-    resources :routine_exercises, only: [ :create, :update, :destroy ]
+    resources :routine_exercises, only: [ :create, :edit, :update, :destroy ]
   end
 
   resources :workout_sessions do

@@ -1,0 +1,18 @@
+<%= turbo_frame_tag dom_id(routine_exercise) do %>
+  <li class="px-4 py-3 flex items-center justify-between">
+    <div>
+      <p class="text-sm font-medium text-zinc-100"><%= routine_exercise.exercise.name %></p>
+      <p class="text-xs text-zinc-500 mt-0.5">
+        <% if routine_exercise.target_sets.present? %><%= routine_exercise.target_sets %> sets<% end %>
+        <% if routine_exercise.target_reps.present? %> × <%= routine_exercise.target_reps %> reps<% end %>
+        <% if routine_exercise.notes.present? %> — <%= routine_exercise.notes %><% end %>
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <%= link_to "Edit", edit_routine_routine_exercise_path(routine, routine_exercise),
+          class: "text-xs text-zinc-500 hover:text-zinc-300 transition-colors" %>
+      <%= button_to "Remove", routine_routine_exercise_path(routine, routine_exercise), method: :delete,
+          class: "text-xs text-red-500 hover:text-red-400 transition-colors bg-transparent border-0 p-0 cursor-pointer" %>
+    </div>
+  </li>
+<% end %>

@@ -1,11 +1,16 @@
 class RoutineExercisesController < ApplicationController
   before_action :set_routine
 
+  def edit
+    @routine_exercise = @routine.routine_exercises.find(params[:id])
+    @exercises = Exercise.ordered
+  end
+
   def create
     position = @routine.routine_exercises.count + 1
     @routine_exercise = @routine.routine_exercises.new(routine_exercise_params.merge(position: position))
     if @routine_exercise.save
-      redirect_to @routine, notice: "Exercise added."
+      redirect_to @routine
     else
       redirect_to @routine, alert: "Could not add exercise."
     end
@@ -14,20 +19,20 @@ class RoutineExercisesController < ApplicationController
   def update
     @routine_exercise = @routine.routine_exercises.find(params[:id])
     if @routine_exercise.update(routine_exercise_params)
-      redirect_to @routine, notice: "Exercise updated."
+      redirect_to @routine
     else
-      redirect_to @routine, alert: "Could not update exercise."
+      @exercises = Exercise.ordered
+      render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
     @routine_exercise = @routine.routine_exercises.find(params[:id])
     @routine_exercise.destroy
-    # Reorder remaining positions
     @routine.routine_exercises.order(:position).each_with_index do |re, i|
       re.update_column(:position, i + 1)
     end
-    redirect_to @routine, notice: "Exercise removed."
+    redirect_to @routine
   end
 
   private

@@ -1,0 +1,39 @@
+<div id="log_form_<%= exercise.id %>"
+     data-controller="rest-timer"
+     data-rest-timer-seconds-value="90">
+  <%= form_with url: workout_session_workout_sets_path(workout_session),
+      data: { action: "turbo:submit-end->rest-timer#start" } do |form| %>
+    <%= form.hidden_field :exercise_id, value: exercise.id %>
+    <%= form.hidden_field :set_number, value: next_set_number %>
+    <%= form.hidden_field :completed, value: true %>
+
+    <div class="flex items-end gap-2">
+      <div class="flex-1">
+        <label class="block text-xs text-zinc-500 mb-1">Reps</label>
+        <%= form.number_field :reps,
+            placeholder: target_reps || "10", min: 1,
+            autofocus: autofocus,
+            data: { "rest-timer-target": "reps" },
+            class: "w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" %>
+      </div>
+
+      <div class="w-20">
+        <label class="block text-xs text-zinc-500 mb-1">Weight</label>
+        <%= form.number_field :weight, placeholder: "0", step: 0.5, min: 0,
+            class: "w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" %>
+      </div>
+
+      <div class="w-24">
+        <label class="block text-xs text-zinc-500 mb-1">Unit</label>
+        <%= form.select :unit,
+            WorkoutSet.units.keys.map { |u| [u, u] },
+            { selected: "bodyweight" },
+            class: "w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" %>
+      </div>
+
+      <%= form.submit "Log", class: "bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold px-4 py-2 rounded-lg transition-colors cursor-pointer text-sm whitespace-nowrap" %>
+    </div>
+
+    <div data-rest-timer-target="display" class="text-xs text-zinc-600 mt-1 h-4"></div>
+  <% end %>
+</div>

@@ -1,0 +1,28 @@
+<%# 1. Append the new set row to the exercise's set list %>
+<%= turbo_stream.append "exercise_sets_#{@exercise.id}" do %>
+  <%= render "workout_sets/workout_set", workout_set: @workout_set %>
+<% end %>
+
+<%# 2. Replace the set counter badge %>
+<%= turbo_stream.replace "set_counter_#{@exercise.id}" do %>
+  <span id="set_counter_<%= @exercise.id %>" class="text-xs text-zinc-500">
+    <%= @logged_sets.count %> / <%= @routine_exercise&.target_sets || "?" %> sets
+  </span>
+<% end %>
+
+<%# 3. Replace the log form — increments set_number and autofocuses reps %>
+<%= turbo_stream.replace "log_form_#{@exercise.id}" do %>
+  <%= render "workout_sets/log_form",
+      workout_session: @workout_session,
+      exercise: @exercise,
+      next_set_number: @logged_sets.count + 1,
+      target_reps: @routine_exercise&.target_reps,
+      autofocus: true %>
+<% end %>
+
+<%# 4. Update overall workout progress bar %>
+<%= turbo_stream.replace "workout_progress" do %>
+  <%= render "workout_sessions/progress",
+      total: @total_sets_target,
+      logged: @total_sets_logged %>
+<% end %>

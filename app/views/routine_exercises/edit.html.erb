@@ -1,0 +1,27 @@
+<%= turbo_frame_tag dom_id(@routine_exercise) do %>
+  <li class="px-4 py-3 bg-zinc-800/50">
+    <%= form_with model: [@routine, @routine_exercise], class: "space-y-2" do |form| %>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <%= form.label :target_sets, "Sets", class: "block text-xs text-zinc-400 mb-1" %>
+          <%= form.number_field :target_sets, min: 1,
+              class: "w-full bg-zinc-800 border border-zinc-600 rounded-lg px-2 py-1.5 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" %>
+        </div>
+        <div>
+          <%= form.label :target_reps, "Reps", class: "block text-xs text-zinc-400 mb-1" %>
+          <%= form.text_field :target_reps,
+              class: "w-full bg-zinc-800 border border-zinc-600 rounded-lg px-2 py-1.5 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" %>
+        </div>
+      </div>
+      <div>
+        <%= form.label :notes, "Notes", class: "block text-xs text-zinc-400 mb-1" %>
+        <%= form.text_field :notes, placeholder: "e.g. slow descent",
+            class: "w-full bg-zinc-800 border border-zinc-600 rounded-lg px-2 py-1.5 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" %>
+      </div>
+      <div class="flex items-center gap-2">
+        <%= form.submit "Save", class: "bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold px-3 py-1.5 rounded-lg text-xs cursor-pointer transition-colors" %>
+        <%= link_to "Cancel", routine_path(@routine), class: "text-xs text-zinc-500 hover:text-zinc-300 transition-colors" %>
+      </div>
+    <% end %>
+  </li>
+<% end %>

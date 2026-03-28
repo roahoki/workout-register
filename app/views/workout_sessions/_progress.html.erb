@@ -1,0 +1,17 @@
+<div id="workout_progress"
+     data-controller="workout-progress"
+     data-workout-progress-total-value="<%= total %>"
+     data-workout-progress-logged-value="<%= logged %>">
+  <% if total > 0 %>
+    <% pct = [(logged.to_f / total * 100).round, 100].min %>
+    <div class="flex items-center justify-between text-xs text-zinc-500 mb-1">
+      <span><%= logged %> / <%= total %> sets</span>
+      <span><%= pct %>%</span>
+    </div>
+    <div class="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+      <div class="h-full bg-emerald-500 rounded-full transition-all duration-500"
+           style="width: <%= pct %>%"
+           data-workout-progress-target="bar"></div>
+    </div>
+  <% end %>
+</div>

@@ -4,9 +4,21 @@ class WorkoutSetsController < ApplicationController
   def create
     @workout_set = @workout_session.workout_sets.new(workout_set_params)
     if @workout_set.save
-      redirect_to @workout_session, notice: "Set logged."
+      @exercise = @workout_set.exercise
+      @logged_sets = @workout_session.workout_sets.where(exercise: @exercise).order(:set_number)
+      @routine_exercise = @workout_session.routine&.routine_exercises&.find_by(exercise: @exercise)
+      @total_sets_logged = @workout_session.workout_sets.count
+      @total_sets_target = @workout_session.routine&.routine_exercises&.sum(:target_sets) || 0
+
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to @workout_session }
+      end
     else
-      redirect_to @workout_session, alert: "Could not log set."
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Could not log set." }) }
+        format.html { redirect_to @workout_session, alert: "Could not log set." }
+      end
     end
   end
 

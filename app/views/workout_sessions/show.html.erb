@@ -10,7 +10,7 @@
     </div>
 
     <% unless @workout_session.completed? %>
-      <%= button_to "Complete workout", complete_workout_session_path(@workout_session), method: :patch,
+      <%= button_to "Complete", complete_workout_session_path(@workout_session), method: :patch,
           data: { turbo_confirm: "Mark this workout as complete?" },
           class: "bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-sm px-4 py-2 rounded-lg transition-colors cursor-pointer" %>
     <% else %>
@@ -20,13 +20,21 @@
     <% end %>
   </div>
 
-  <%# Exercises %>
+  <%# Progress bar (only for routine-based sessions) %>
+  <% if @exercises_with_sets.any? %>
+    <% total_target = @exercises_with_sets.sum { |re| re.target_sets || 0 } %>
+    <% total_logged = @workout_session.workout_sets.count %>
+    <%= render "workout_sessions/progress", total: total_target, logged: total_logged %>
+  <% end %>
+
+  <%# Routine-based: one card per exercise %>
   <% if @exercises_with_sets.any? %>
     <% @exercises_with_sets.each do |re| %>
       <% exercise = re.exercise %>
       <% logged_sets = (@sets_by_exercise[exercise.id] || []).sort_by(&:set_number) %>
 
       <div class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+        <%# Exercise header with set counter %>
         <div class="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
           <div>
             <h2 class="font-semibold text-zinc-100 text-sm"><%= exercise.name %></h2>
@@ -34,65 +42,34 @@
               Target: <%= re.target_sets || "?" %> sets × <%= re.target_reps || "?" %> reps
             </p>
           </div>
-          <span class="text-xs text-zinc-500"><%= logged_sets.count %> / <%= re.target_sets || "?" %> sets</span>
+          <span id="set_counter_<%= exercise.id %>" class="text-xs text-zinc-500">
+            <%= logged_sets.count %> / <%= re.target_sets || "?" %> sets
+          </span>
         </div>
 
-        <%# Logged sets %>
-        <% if logged_sets.any? %>
-          <ul class="divide-y divide-zinc-800/50">
-            <% logged_sets.each do |set| %>
-              <li class="px-4 py-2.5 flex items-center justify-between text-sm">
-                <span class="text-zinc-500 w-12">Set <%= set.set_number %></span>
-                <span class="text-zinc-100 flex-1">
-                  <%= set.reps %> reps
-                  <% if set.weight.present? && set.weight > 0 %>
-                    · <%= set.weight %> <%= set.unit %>
-                  <% end %>
-                </span>
-                <span class="<%= set.completed? ? 'text-emerald-400' : 'text-zinc-600' %>">
-                  <%= set.completed? ? "✓" : "○" %>
-                </span>
-              </li>
-            <% end %>
-          </ul>
-        <% end %>
+        <%# Logged sets list — stream appends here %>
+        <ul id="exercise_sets_<%= exercise.id %>" class="divide-y divide-zinc-800/50">
+          <% logged_sets.each do |set| %>
+            <%= render "workout_sets/workout_set", workout_set: set %>
+          <% end %>
+        </ul>
 
-        <%# Log a set form %>
+        <%# Log a set — stream replaces this form %>
         <% unless @workout_session.completed? %>
           <div class="px-4 py-3 border-t border-zinc-800/50 bg-zinc-950/30">
-            <%= form_with url: workout_session_workout_sets_path(@workout_session), class: "flex items-end gap-2" do |form| %>
-              <%= form.hidden_field :exercise_id, value: exercise.id %>
-              <%= form.hidden_field :set_number, value: logged_sets.count + 1 %>
-              <%= form.hidden_field :completed, value: true %>
-
-              <div class="flex-1">
-                <label class="block text-xs text-zinc-500 mb-1">Reps</label>
-                <%= form.number_field :reps, placeholder: re.target_reps || "10", min: 1,
-                    class: "w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" %>
-              </div>
-
-              <div class="w-24">
-                <label class="block text-xs text-zinc-500 mb-1">Weight</label>
-                <%= form.number_field :weight, placeholder: "0", step: 0.5, min: 0,
-                    class: "w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" %>
-              </div>
-
-              <div class="w-24">
-                <label class="block text-xs text-zinc-500 mb-1">Unit</label>
-                <%= form.select :unit,
-                    WorkoutSet.units.keys.map { |u| [u, u] },
-                    { selected: "bodyweight" },
-                    class: "w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" %>
-              </div>
-
-              <%= form.submit "Log", class: "bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold px-4 py-2 rounded-lg transition-colors cursor-pointer text-sm whitespace-nowrap" %>
-            <% end %>
+            <%= render "workout_sets/log_form",
+                workout_session: @workout_session,
+                exercise: exercise,
+                next_set_number: logged_sets.count + 1,
+                target_reps: re.target_reps,
+                autofocus: false %>
           </div>
         <% end %>
       </div>
     <% end %>
+
   <% else %>
-    <%# Freeform session — single log form %>
+    <%# Freeform session %>
     <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
       <h2 class="text-sm font-semibold text-zinc-300 mb-4">Log a set</h2>
       <%= form_with url: workout_session_workout_sets_path(@workout_session), class: "space-y-3" do |form| %>
@@ -133,7 +110,6 @@
       <% end %>
     </div>
 
-    <%# Show logged sets grouped by exercise %>
     <% if @workout_session.workout_sets.any? %>
       <% @workout_session.workout_sets.includes(:exercise).group_by(&:exercise).each do |exercise, sets| %>
         <div class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
@@ -142,16 +118,7 @@
           </div>
           <ul class="divide-y divide-zinc-800/50">
             <% sets.sort_by(&:set_number).each do |set| %>
-              <li class="px-4 py-2.5 flex items-center justify-between text-sm">
-                <span class="text-zinc-500 w-12">Set <%= set.set_number %></span>
-                <span class="text-zinc-100">
-                  <%= set.reps %> reps
-                  <% if set.weight.present? && set.weight > 0 %>
-                    · <%= set.weight %> <%= set.unit %>
-                  <% end %>
-                </span>
-                <span class="text-emerald-400">✓</span>
-              </li>
+              <%= render "workout_sets/workout_set", workout_set: set %>
             <% end %>
           </ul>
         </div>

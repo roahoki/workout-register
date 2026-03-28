@@ -1,0 +1,10 @@
+<li id="<%= dom_id(workout_set) %>" class="px-4 py-2.5 flex items-center justify-between text-sm">
+  <span class="text-zinc-500 w-12">Set <%= workout_set.set_number %></span>
+  <span class="text-zinc-100 flex-1">
+    <%= workout_set.reps %> reps
+    <% if workout_set.weight.present? && workout_set.weight > 0 %>
+      · <%= workout_set.weight %> <%= workout_set.unit %>
+    <% end %>
+  </span>
+  <span class="text-emerald-400">✓</span>
+</li>
