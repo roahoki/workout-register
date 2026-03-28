@@ -1,11 +1,50 @@
 <div class="space-y-6">
   <div>
     <h1 class="text-2xl font-bold text-zinc-100">Dashboard</h1>
-    <p class="text-zinc-500 text-sm mt-1">Welcome back. Ready to train?</p>
+    <p class="text-zinc-500 text-sm mt-1">Ready to train?</p>
   </div>
 
-  <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center">
-    <p class="text-zinc-500 text-sm">Your workout history will appear here.</p>
-    <p class="text-zinc-600 text-xs mt-1">Routines and sessions coming soon.</p>
+  <%# Quick actions %>
+  <div class="grid grid-cols-2 gap-3">
+    <%= link_to new_workout_session_path, class: "bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-sm px-4 py-3 rounded-xl transition-colors text-center" do %>
+      Start workout
+    <% end %>
+    <%= link_to routines_path, class: "bg-zinc-800 hover:bg-zinc-700 text-zinc-100 font-medium text-sm px-4 py-3 rounded-xl transition-colors text-center" do %>
+      My routines
+    <% end %>
   </div>
+
+  <%# Recent sessions %>
+  <% recent = Current.user.workout_sessions.recent.includes(:routine).limit(5) %>
+  <% if recent.any? %>
+    <div>
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Recent workouts</h2>
+        <%= link_to "See all", workout_sessions_path, class: "text-xs text-emerald-400 hover:text-emerald-300 transition-colors" %>
+      </div>
+      <div class="space-y-2">
+        <% recent.each do |session| %>
+          <div class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-zinc-100"><%= session.routine&.name || "Freeform" %></p>
+              <p class="text-xs text-zinc-500"><%= session.created_at.strftime("%b %d") %></p>
+            </div>
+            <div class="flex items-center gap-2">
+              <% if session.completed? %>
+                <span class="text-xs text-emerald-400">✓ Done</span>
+              <% else %>
+                <span class="text-xs text-amber-400">In progress</span>
+              <% end %>
+              <%= link_to "→", workout_session_path(session), class: "text-zinc-600 hover:text-zinc-300 transition-colors" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center">
+      <p class="text-zinc-500 text-sm">No workouts yet.</p>
+      <p class="text-zinc-600 text-xs mt-1">Create a routine and start your first session.</p>
+    </div>
+  <% end %>
 </div>

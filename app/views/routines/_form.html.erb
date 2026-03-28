@@ -1,0 +1,24 @@
+<%= form_with model: routine, class: "space-y-4" do |form| %>
+  <% if routine.errors.any? %>
+    <div class="bg-red-900/40 border border-red-700 text-red-300 text-sm px-3 py-2 rounded-lg">
+      <% routine.errors.full_messages.each do |msg| %>
+        <p><%= msg %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name, "Name", class: "block text-sm font-medium text-zinc-400 mb-1" %>
+    <%= form.text_field :name, placeholder: "e.g. Push Day",
+        class: "w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" %>
+  </div>
+
+  <div>
+    <%= form.label :description, "Description", class: "block text-sm font-medium text-zinc-400 mb-1" %>
+    <%= form.text_area :description, rows: 3, placeholder: "Optional notes about this routine",
+        class: "w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm resize-none" %>
+  </div>
+
+  <%= form.submit routine.persisted? ? "Save changes" : "Create routine",
+      class: "w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold py-2.5 rounded-lg transition-colors cursor-pointer text-sm" %>
+<% end %>

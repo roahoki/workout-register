@@ -1,0 +1,53 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-zinc-100">History</h1>
+    <%= link_to "Start workout", new_workout_session_path, class: "bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-sm px-4 py-2 rounded-lg transition-colors" %>
+  </div>
+
+  <% in_progress = @sessions.select { |s| !s.completed? } %>
+  <% completed = @sessions.select(&:completed?) %>
+
+  <% if in_progress.any? %>
+    <div>
+      <h2 class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">In progress</h2>
+      <div class="space-y-2">
+        <% in_progress.each do |session| %>
+          <div class="bg-emerald-900/20 border border-emerald-800 rounded-2xl px-5 py-4 flex items-center justify-between">
+            <div>
+              <p class="font-semibold text-zinc-100"><%= session.routine&.name || "Freeform workout" %></p>
+              <p class="text-xs text-zinc-500 mt-0.5"><%= session.created_at.strftime("%b %d, %Y · %H:%M") %></p>
+            </div>
+            <%= link_to "Continue →", workout_session_path(session), class: "text-emerald-400 hover:text-emerald-300 font-semibold text-sm transition-colors" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if completed.any? %>
+    <div>
+      <h2 class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Completed</h2>
+      <div class="space-y-2">
+        <% completed.each do |session| %>
+          <div class="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-4 flex items-center justify-between">
+            <div>
+              <p class="font-semibold text-zinc-100"><%= session.routine&.name || "Freeform workout" %></p>
+              <p class="text-xs text-zinc-500 mt-0.5">
+                <%= session.completed_at.strftime("%b %d, %Y") %> ·
+                <%= session.workout_sets.count %> sets logged
+              </p>
+            </div>
+            <%= link_to "View", workout_session_path(session), class: "text-zinc-500 hover:text-zinc-300 text-sm transition-colors" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @sessions.empty? %>
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center">
+      <p class="text-zinc-500 text-sm">No workouts yet.</p>
+      <%= link_to "Start your first workout", new_workout_session_path, class: "text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-colors" %>
+    </div>
+  <% end %>
+</div>
