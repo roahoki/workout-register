@@ -9,9 +9,10 @@ primary_region = "mia"
 [env]
   RAILS_LOG_LEVEL = "info"
   SOLID_QUEUE_IN_PUMA = "true"
+  PORT = "8080"
 
 [http_service]
-  internal_port = 3000
+  internal_port = 8080
   force_https = true
   auto_stop_machines = "stop"
   auto_start_machines = true
