@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  routine: one
+  exercise: one
+  position: 1
+  target_sets: 1
+  target_reps: MyString
+  notes: MyString
+
+two:
+  routine: two
+  exercise: two
+  position: 1
+  target_sets: 1
+  target_reps: MyString
+  notes: MyString

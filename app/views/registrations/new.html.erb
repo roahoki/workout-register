@@ -1,0 +1,53 @@
+<div class="min-h-screen flex items-center justify-center px-4">
+  <div class="w-full max-w-sm">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-emerald-400 tracking-tight">Workout Register</h1>
+      <p class="text-zinc-500 mt-1 text-sm">Start tracking your calisthenics progress</p>
+    </div>
+
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+      <h2 class="text-xl font-semibold text-zinc-100 mb-6">Create account</h2>
+
+      <%= form_with model: @user, url: registration_path do |form| %>
+        <% if @user.errors.any? %>
+          <div class="bg-red-900/40 border border-red-700 text-red-300 text-sm px-3 py-2 rounded-lg mb-4">
+            <% @user.errors.full_messages.each do |msg| %>
+              <p><%= msg %></p>
+            <% end %>
+          </div>
+        <% end %>
+
+        <div class="space-y-4">
+          <div>
+            <%= form.label :email_address, "Email", class: "block text-sm font-medium text-zinc-400 mb-1" %>
+            <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username",
+                placeholder: "you@example.com",
+                class: "w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" %>
+          </div>
+
+          <div>
+            <%= form.label :password, "Password", class: "block text-sm font-medium text-zinc-400 mb-1" %>
+            <%= form.password_field :password, required: true, autocomplete: "new-password",
+                placeholder: "••••••••", maxlength: 72,
+                class: "w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" %>
+          </div>
+
+          <div>
+            <%= form.label :password_confirmation, "Confirm password", class: "block text-sm font-medium text-zinc-400 mb-1" %>
+            <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password",
+                placeholder: "••••••••", maxlength: 72,
+                class: "w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" %>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <%= form.submit "Create account", class: "w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold py-2.5 rounded-lg transition-colors cursor-pointer text-sm" %>
+        </div>
+      <% end %>
+
+      <div class="mt-4 text-center text-sm">
+        <%= link_to "Already have an account? Sign in", new_session_path, class: "text-zinc-500 hover:text-zinc-300 transition-colors" %>
+      </div>
+    </div>
+  </div>
+</div>

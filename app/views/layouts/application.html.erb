@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="h-full">
   <head>
     <title><%= content_for(:title) || "Workout Register" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -11,20 +11,38 @@
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+  <body class="h-full bg-zinc-950 text-zinc-100 antialiased">
+    <% if authenticated? %>
+      <nav class="border-b border-zinc-800 px-4 py-3 flex items-center justify-between">
+        <span class="font-bold tracking-tight text-emerald-400 text-lg"><%= link_to "Workout Register", root_path %></span>
+        <div class="flex items-center gap-4 text-sm">
+          <%= link_to "Routines", routines_path, class: "text-zinc-400 hover:text-zinc-100 transition-colors" rescue nil %>
+          <%= link_to "History", workout_sessions_path, class: "text-zinc-400 hover:text-zinc-100 transition-colors" rescue nil %>
+          <%= button_to "Sign out", session_path, method: :delete, class: "text-zinc-400 hover:text-zinc-100 transition-colors cursor-pointer bg-transparent border-0 p-0 text-sm" %>
+        </div>
+      </nav>
+    <% end %>
+
+    <% if notice = flash[:notice] %>
+      <div class="bg-emerald-900/40 border border-emerald-700 text-emerald-300 text-sm px-4 py-3 mx-4 mt-3 rounded-lg">
+        <%= notice %>
+      </div>
+    <% end %>
+    <% if alert = flash[:alert] %>
+      <div class="bg-red-900/40 border border-red-700 text-red-300 text-sm px-4 py-3 mx-4 mt-3 rounded-lg">
+        <%= alert %>
+      </div>
+    <% end %>
+
+    <main class="<%= authenticated? ? 'max-w-2xl mx-auto px-4 py-8' : '' %>">
       <%= yield %>
     </main>
   </body>
