@@ -3,7 +3,11 @@ Rails.application.routes.draw do
   resources :passwords, param: :token
   resource :registration, only: [ :new, :create ]
 
-  resources :exercises, only: [ :index, :show ]
+  resources :exercises
+
+  get  "check-email",          to: "email_verifications#check",  as: :check_email
+  get  "verify-email/:token",  to: "email_verifications#verify",  as: :verify_email
+  post "resend-verification",  to: "email_verifications#resend",  as: :resend_verification
 
   resources :routines do
     resources :routine_exercises, only: [ :create, :edit, :update, :destroy ]

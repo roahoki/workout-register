@@ -1,0 +1,40 @@
+<%= form_with model: exercise do |form| %>
+  <% if exercise.errors.any? %>
+    <div class="bg-red-900/40 border border-red-700 text-red-300 text-sm px-3 py-2 rounded-lg mb-4">
+      <% exercise.errors.full_messages.each do |msg| %>
+        <p><%= msg %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="space-y-4">
+    <div>
+      <%= form.label :name, "Exercise name", class: "block text-sm font-medium text-zinc-400 mb-1" %>
+      <%= form.text_field :name, required: true, autofocus: true,
+          placeholder: "e.g. Dragon flag",
+          class: "w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" %>
+    </div>
+
+    <div>
+      <%= form.label :muscle_group, "Muscle group", class: "block text-sm font-medium text-zinc-400 mb-1" %>
+      <%= form.select :muscle_group,
+          Exercise.muscle_groups.keys.map { |k| [ k.humanize, k ] },
+          { prompt: "Select a group" },
+          class: "w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" %>
+    </div>
+
+    <div>
+      <%= form.label :description, "Description (optional)", class: "block text-sm font-medium text-zinc-400 mb-1" %>
+      <%= form.text_area :description,
+          rows: 3,
+          placeholder: "How to perform it, tips, progressions…",
+          class: "w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm resize-none" %>
+    </div>
+  </div>
+
+  <div class="mt-6 flex gap-3">
+    <%= form.submit exercise.new_record? ? "Add exercise" : "Save changes",
+        class: "bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold py-2.5 px-4 rounded-lg transition-colors cursor-pointer text-sm" %>
+    <%= link_to "Cancel", exercises_path, class: "text-zinc-400 hover:text-zinc-100 text-sm py-2.5 px-4 transition-colors" %>
+  </div>
+<% end %>

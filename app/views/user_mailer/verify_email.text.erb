@@ -1,0 +1,9 @@
+Plannisthenics — Verify your email
+
+Hi <%= @user.email_address %>,
+
+Click the link below to verify your email and activate your account:
+
+<%= verify_email_url(@token) %>
+
+This link expires in 24 hours. If you didn't create an account, you can ignore this email.

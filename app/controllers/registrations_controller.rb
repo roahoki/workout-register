@@ -8,8 +8,8 @@ class RegistrationsController < ApplicationController
   def create
     @user = User.new(registration_params)
     if @user.save
-      start_new_session_for(@user)
-      redirect_to root_path, notice: "Welcome! Your account has been created."
+      UserMailer.verify_email(@user).deliver_later
+      redirect_to check_email_path, notice: "Account created! Check your email to verify your address."
     else
       render :new, status: :unprocessable_entity
     end

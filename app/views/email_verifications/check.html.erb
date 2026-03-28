@@ -1,0 +1,31 @@
+<div class="min-h-screen flex items-center justify-center px-4">
+  <div class="w-full max-w-sm">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-emerald-400 tracking-tight">Plannisthenics</h1>
+    </div>
+
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center">
+      <div class="text-4xl mb-4">📬</div>
+      <h2 class="text-xl font-semibold text-zinc-100 mb-2">Check your email</h2>
+      <p class="text-zinc-400 text-sm mb-6">We sent a verification link to your email address. Click it to activate your account.</p>
+      <p class="text-zinc-500 text-xs mb-8">The link expires in 24 hours.</p>
+
+      <div class="border-t border-zinc-800 pt-6">
+        <p class="text-zinc-500 text-sm mb-4">Didn't receive it?</p>
+        <%= form_with url: resend_verification_path, method: :post do |form| %>
+          <div class="space-y-3">
+            <%= form.email_field :email_address, required: true,
+                placeholder: "your@email.com",
+                class: "w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" %>
+            <%= form.submit "Resend verification email",
+                class: "w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium py-2.5 rounded-lg transition-colors cursor-pointer text-sm border border-zinc-700" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="mt-4 text-center text-sm">
+      <%= link_to "Back to sign in", new_session_path, class: "text-zinc-500 hover:text-zinc-300 transition-colors" %>
+    </div>
+  </div>
+</div>

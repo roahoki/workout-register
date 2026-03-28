@@ -3,6 +3,7 @@ module Authentication
 
   included do
     before_action :require_authentication
+    before_action :require_verified_email
     helper_method :authenticated?
   end
 
@@ -27,6 +28,13 @@ module Authentication
 
     def find_session_by_cookie
       Session.find_by(id: cookies.signed[:session_id]) if cookies.signed[:session_id]
+    end
+
+    def require_verified_email
+      return unless Current.user
+      return if Current.user.verified?
+      terminate_session
+      redirect_to new_session_path, alert: "Please verify your email address before signing in."
     end
 
     def request_authentication
